@@ -128,7 +128,7 @@ var zsido = {
   _findContractHtmlRow: function (contract) {
     for (let i = 0; i < this._$contractDivs.length; i++) {
       const div = this._$contractDivs[i];
-      if (div.textContent.toLowerCase().includes(contract)) {
+      if (div.querySelector(".name").textContent.toLowerCase().includes(contract)) {
         return div;
       }
     }
@@ -137,8 +137,8 @@ var zsido = {
 
   _cache: function () {
     // cache contract div container
-    this._$contractDivs = document.querySelectorAll('.contract.live');
-    console.log(document.querySelectorAll('.contract.live'));
+    this._$contractDivs = document.querySelectorAll('.contract');
+    console.log(document.querySelectorAll('.contract'));
     if (!this._$contractDivs) {
       console.error("An error happened while caching the contracts");
     }
