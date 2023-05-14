@@ -138,12 +138,11 @@ var zsido = {
   _cache: function () {
     // cache contract div container
     this._$contractDivs = document.querySelectorAll('.contract');
-    console.log(document.querySelectorAll('.contract'));
+    console.log(this._$contractDivs);
     if (!this._$contractDivs) {
       console.error("An error happened while caching the contracts");
     }
     console.log("Cached");
-    console.log(this._$contractDivs);
   },
 
   _checkForChanges: function() {
