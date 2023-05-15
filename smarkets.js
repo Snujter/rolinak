@@ -38,7 +38,7 @@ var zsido = {
 
   // Function to add a new check
   setCheck: function(contract, settings) {
-    const {maxSell, videoId, shouldRun} = settings;
+    const {maxSell, minSell, videoId, shouldRun} = settings;
     contract = contract && contract.toLowerCase();
     if (!contract) {
       console.error("Please enter a contract.");
@@ -49,30 +49,39 @@ var zsido = {
       console.error(`Invalid contract ${contract}`);
       return;
     }
+    if (maxSell > 0 && minSell > 0) {
+    	console.error("Max and min sell can't be specified at the same time.");
+    }
 
     const existing = this._getCheckByContract(contract);
     if (existing) {
+    	if (maxSell > 0) {
+    		settings["minSell"] = 0;
+    	} else if (minSell > 0) {
+    		settings["maxSell"] = 0;
+    	}
       console.log("Updating check with new values");
       console.log({existing, settings});
       // Update the existing check
       Object.assign(existing, settings);
     } else {
       console.log("Adding new check");
-      if (!maxSell) {
-        console.error("Please enter a max sell.");
+      if (!maxSell && !minSell) {
+        console.error("Please enter a min or max sell.");
         return;
       }
-      if (!videoId) {
-        console.error("Please enter a youtube video id.");
-        return;
-      }
+      // if (!videoId) {
+      //   console.error("Please enter a youtube video id.");
+      //   return;
+      // }
 
       // Add a new check
       this._checks.push({
         _$contractDiv,
         contract,
+        minSell,
         maxSell,
-        videoId,
+        videoId: videoId || "0rAUEkPzgMo", // Mr. Krabs cash machine sound
         shouldRun: true
       });
 
@@ -159,7 +168,12 @@ var zsido = {
     .filter((check) => {
       // filters only the changes
       $price = check._$contractDiv.querySelector(".price.sell");
-      return check.maxSell <= $price.textContent
+      if (check.minSell > 0) {
+      	return check.minSell >= $price.textContent;
+      } else if (check.maxSell > 0) {
+      	return check.maxSell <= $price.textContent;
+      }
+      return false;
     })
     .map(check => (check.videoId)) // gets the video ids
     .filter((videoId, index, self) => (index === self.indexOf(videoId))); // filters out unique video ids
